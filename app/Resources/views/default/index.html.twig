@@ -1,0 +1,43 @@
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+{% endblock %}
+
+{% block stylesheets %}
+
+{% endblock %}
+
+
+<p>Hallo {name}</p>
+
+<h1>Members</h1>
+<ul>
+    {% for user in users %}
+        <li>{{ user.username|e }}</li>
+    {% endfor %}
+</ul>
+
+
+{% if not user.subscribed %}
+    <p>You are not subscribed to our mailing list.</p>
+{% endif %}
+
+{% if temperature > 18 and temperature < 27 %}
+    <p>It's a nice day for a walk in the park.</p>
+{% endif %}
+
+{% if product.stock > 10 %}
+    Available
+{% elseif product.stock > 0 %}
+    Only {{ product.stock }} left!
+{% else %}
+    Sold-out!
+{% endif %}
+
+
+
+
+

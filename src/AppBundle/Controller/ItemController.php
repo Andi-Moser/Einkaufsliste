@@ -14,6 +14,12 @@ class ItemController extends Controller
      * @Route("/list")
      */
     public function listAction(Request $request) {
+        // return false wenn kein Zugriff
+        if (!$this->checkAccess($request)) {
+            // code wird ausgeführt wenn kein Zugriff
+            return $this->redirect("/login");
+        }
+
         $mysqli = $this->getMysqli();
 
         // Daten aus Datenbank laden
@@ -23,13 +29,19 @@ class ItemController extends Controller
         // Als Array auslesen
         $row = $result->fetch_all();
 
-        return $this->render("item/list.html.php", ["items" => $row]);
+        return $this->render("item/list.html.php", ["items" => $row, "username" => $request->getSession()->get('username')]);
     }
 
     /**
      * @Route("/add")
      */
     public function addAction(Request $request) {
+        // return false wenn kein Zugriff
+        if (!$this->checkAccess($request)) {
+            // code wird ausgeführt wenn kein Zugriff
+            return $this->redirect("/login");
+        }
+
         $itemCount = intval($request->get('count'));
         $itemName = $request->get('name');
 
@@ -46,6 +58,12 @@ class ItemController extends Controller
      * @Route("/delete")
      */
     public function deleteAction(Request $request) {
+        // return false wenn kein Zugriff
+        if (!$this->checkAccess($request)) {
+            // code wird ausgeführt wenn kein Zugriff
+            return $this->redirect("/login");
+        }
+
         $idToDelete = intval($request->get('id'));
 
         $mysqli = $this->getMysqli();
@@ -61,6 +79,12 @@ class ItemController extends Controller
      * @Route("/edit");
      */
     public function editAction(Request $request) {
+        // return false wenn kein Zugriff
+        if (!$this->checkAccess($request)) {
+            // code wird ausgeführt wenn kein Zugriff
+            return $this->redirect("/login");
+        }
+
         $idToEdit = $request->get('id');
         $mysqli = $this->getMysqli();
 
@@ -97,5 +121,15 @@ class ItemController extends Controller
         }
 
         return $mysqli;
+    }
+
+    private function checkAccess(Request $request) {
+        $session = $request->getSession();
+
+        if ($session->get('username')) {
+            return true;
+        }
+
+        return false;
     }
 }

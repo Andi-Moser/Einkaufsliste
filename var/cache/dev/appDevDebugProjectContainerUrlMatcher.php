@@ -153,6 +153,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
             return array (  '_controller' => 'AppBundle\\Controller\\ItemController::editAction',  '_route' => 'app_item_edit',);
         }
 
+        // app_login_register
+        if ('/register' === $pathinfo) {
+            return array (  '_controller' => 'AppBundle\\Controller\\LoginController::registerAction',  '_route' => 'app_login_register',);
+        }
+
         if ('/' === $pathinfo && !$allow) {
             throw new Symfony\Component\Routing\Exception\NoConfigurationException();
         }

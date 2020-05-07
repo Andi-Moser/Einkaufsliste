@@ -14,7 +14,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h1>Einkaufsliste</h1>
+            <h1>Einkaufsliste von <?php echo $username; ?></h1>
 
             <table class="table">
                 <tr>
@@ -51,6 +51,8 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Hinzufügen</button>
             </form>
+
+            <a class="btn btn-danger" href="/logout">Logout</a>
 
         </div>
     </div>

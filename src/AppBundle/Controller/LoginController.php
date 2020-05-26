@@ -41,7 +41,6 @@ class LoginController extends Controller
      * @Route("/login");
      */
     public function loginAction(Request $request) {
-
         if ($request->isMethod("POST")) {
             $username = $request->get('username');
             $password = $request->get('password');
@@ -49,8 +48,9 @@ class LoginController extends Controller
             $password = md5($this->salt . $password);
 
             $mysqli = $this->getMysqli();
+
             $statement = $mysqli->prepare("SELECT id FROM mon_user WHERE username = ? AND password = ?");
-            $statement->bind_param("ss", $username, $password);
+            $statement->bind_param("ss", $username, $password); // Dies verhindert die Injection!
             $statement->execute();
             $result = $statement->get_result();
             $userData = $result->fetch_assoc();

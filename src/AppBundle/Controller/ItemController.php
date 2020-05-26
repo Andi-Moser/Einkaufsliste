@@ -18,10 +18,11 @@ class ItemController extends Controller
             return $this->redirect("/login");
         }
 
+        $userId = $request->getSession()->get('userId');
         $mysqli = $this->getMysqli();
 
         // Daten aus Datenbank laden
-        $sql = "SELECT * FROM amo_items";
+        $sql = "SELECT * FROM amo_items WHERE userId = " . $userId;
         $result = $mysqli->query($sql);
 
         // Als Array auslesen
@@ -42,9 +43,10 @@ class ItemController extends Controller
         $itemName = $request->get('name');
 
         $mysqli = $this->getMysqli();
+        $userId = $request->getSession()->get('userId');
 
-        $statement = $mysqli->prepare("INSERT INTO amo_items(amount, name) VALUES(?,?)");
-        $statement->bind_param("is", $itemCount, $itemName);
+        $statement = $mysqli->prepare("INSERT INTO amo_items(amount, name, userId) VALUES(?,?,?)");
+        $statement->bind_param("isi", $itemCount, $itemName, $userId);
         $statement->execute();
 
         return $this->redirect("/list");
@@ -59,11 +61,12 @@ class ItemController extends Controller
         }
 
         $idToDelete = intval($request->get('id'));
+        $userId = $request->getSession()->get('userId');
 
         $mysqli = $this->getMysqli();
 
-        $statement = $mysqli->prepare("DELETE FROM amo_items WHERE id = ?");
-        $statement->bind_param("i", $idToDelete);
+        $statement = $mysqli->prepare("DELETE FROM amo_items WHERE id = ? AND userId = ?");
+        $statement->bind_param("ii", $idToDelete, $userId);
         $statement->execute();
 
         return $this->redirect("/list");
@@ -81,21 +84,26 @@ class ItemController extends Controller
         $mysqli = $this->getMysqli();
 
         if ($request->getMethod() == "POST") {
+            $userId = $request->getSession()->get('userId');
             $itemCount = intval($request->get('count'));
             $itemName = $request->get('name');
 
-            $statement = $mysqli->prepare("UPDATE amo_items SET amount = ?, name = ? WHERE id = ?");
-            $statement->bind_param("isi", $itemCount, $itemName, $idToEdit);
+            $statement = $mysqli->prepare("UPDATE amo_items SET amount = ?, name = ? WHERE id = ? AND userId = ?");
+            $statement->bind_param("isii", $itemCount, $itemName, $idToEdit, $userId);
             $statement->execute();
 
             return $this->redirect("/list");
         }
 
-        $sql = "SELECT * FROM amo_items WHERE id = " . intval($idToEdit);
+        $sql = "SELECT * FROM amo_items WHERE id = " . intval($idToEdit) . " AND userId = " . $request->getSession()->get('userId');
         $result = $mysqli->query($sql);
 
         // Als Array auslesen
         $item = $result->fetch_array(MYSQLI_ASSOC);
+
+        if ($item == null) {
+            return $this->redirect("/list");
+        }
 
         return $this->render("item/edit.html.php", ["item" => $item]);
     }

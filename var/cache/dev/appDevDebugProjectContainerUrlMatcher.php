@@ -107,7 +107,12 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        elseif (0 === strpos($pathinfo, '/hello')) {
+        // app_comment_addfunction
+        if ('/comment/add' === $pathinfo) {
+            return array (  '_controller' => 'AppBundle\\Controller\\CommentController::addFunction',  '_route' => 'app_comment_addfunction',);
+        }
+
+        if (0 === strpos($pathinfo, '/hello')) {
             // app_default_hello
             if (preg_match('#^/hello/(?P<name>[^/]++)$#sD', $pathinfo, $matches)) {
                 return $this->mergeDefaults(array_replace($matches, ['_route' => 'app_default_hello']), array (  '_controller' => 'AppBundle\\Controller\\DefaultController::hello',));
@@ -120,7 +125,17 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        elseif (0 === strpos($pathinfo, '/l')) {
+        // app_item_detail
+        if ('/detail' === $pathinfo) {
+            return array (  '_controller' => 'AppBundle\\Controller\\ItemController::detailAction',  '_route' => 'app_item_detail',);
+        }
+
+        // app_item_delete
+        if ('/delete' === $pathinfo) {
+            return array (  '_controller' => 'AppBundle\\Controller\\ItemController::deleteAction',  '_route' => 'app_item_delete',);
+        }
+
+        if (0 === strpos($pathinfo, '/l')) {
             // app_item_list
             if ('/list' === $pathinfo) {
                 return array (  '_controller' => 'AppBundle\\Controller\\ItemController::listAction',  '_route' => 'app_item_list',);
@@ -141,11 +156,6 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         // app_item_add
         if ('/add' === $pathinfo) {
             return array (  '_controller' => 'AppBundle\\Controller\\ItemController::addAction',  '_route' => 'app_item_add',);
-        }
-
-        // app_item_delete
-        if ('/delete' === $pathinfo) {
-            return array (  '_controller' => 'AppBundle\\Controller\\ItemController::deleteAction',  '_route' => 'app_item_delete',);
         }
 
         // app_item_edit

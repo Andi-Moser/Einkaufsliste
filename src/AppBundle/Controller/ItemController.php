@@ -11,6 +11,39 @@ use Symfony\Component\Routing\Annotation\Route;
 class ItemController extends Controller
 {
     /**
+     * @Route("/detail")
+     */
+    public function detailAction(Request $request) {
+        if (!$this->checkAccess($request)) {
+            return $this->redirect("/login");
+        }
+
+        $mysqli = $this->getMysqli();
+        $itemId = $request->get('id');
+        $sql = "SELECT * FROM amo_items WHERE id = ?";
+
+        $statement = $mysqli->prepare($sql);
+        $statement->bind_param("i", $itemId);
+        $statement->execute();
+        $result = $statement->get_result();
+        $item = $result->fetch_assoc();
+
+
+        $commentResult = $mysqli->query("SELECT amo_comments.id, comment, timestamp, username 
+                                                    FROM amo_comments 
+                                                    INNER JOIN mon_user ON mon_user.id = amo_comments.userId 
+                                                    WHERE itemId = ".intval($itemId)." 
+                                                    ORDER BY `timestamp` DESC");
+        $comments = [];
+
+        while (($line = $commentResult->fetch_assoc()) != null) {
+            $comments[] = $line;
+        }
+
+        return $this->render("item/detail.html.php", ["item" => $item, "comments" => $comments]);
+    }
+
+    /**
      * @Route("/list")
      */
     public function listAction(Request $request) {

@@ -14,42 +14,45 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h1>Einkaufsliste von <?php echo $username; ?></h1>
+            <h1>Detailseite von <?php echo $item['name']; ?></h1>
 
             <table class="table">
                 <tr>
-                    <th>#</th>
-                    <th>Anzahl</th>
+                    <th>Id</th>
                     <th>Name</th>
-                    <th>Bearbeiten</th>
-                    <th>Löschen</th>
+                    <th>Amount</th>
                 </tr>
-
-                <?php
-                    foreach ($items as $item) {
-                        ?>
-                        <tr>
-                            <td><?php echo $item[0] ?></td>
-                            <td><?php echo $item[1] ?></td>
-                            <td><a href="/detail?id=<?php echo $item[0] ?>"><?php echo $item[2] ?></a></td>
-                            <td><a href="/edit?id=<?php echo $item[0] ?>" class="btn btn-info">Bearbeiten</a></td>
-                            <td><a href="/delete?id=<?php echo $item[0] ?>" class="btn btn-danger">X</a></td>
-                        </tr>
-                        <?php
-                    }
-                ?>
+                <tr>
+                    <td><?php echo $item['id']; ?></td>
+                    <td><?php echo $item['name']; ?></td>
+                    <td><?php echo $item['amount']; ?></td>
+                </tr>
             </table>
 
-            <form action="/add" method="post">
+            <h2>Kommentare</h2>
+
+            <?php
+                foreach ($comments as $comment) {
+                    $timestamp = new DateTime();
+                    $timestamp->setTimestamp(intval($comment['timestamp']) + 60*60);
+                    ?>
+                    <div class="comment">
+                        <strong><?php echo $comment['username']; ?></strong> schreibt am <?php echo $timestamp->format("d.m.Y H:i"); ?>:<br />
+                        <p>
+                            <?php echo nl2br($comment['comment']); ?>
+                        </p>
+                    </div>
+                    <?php
+                }
+            ?>
+
+            <form action="/comment/add" method="post">
+                <input type="hidden" name="itemId" value="<?php echo $item['id']; ?>">
                 <div class="form-group">
-                    <label for="count">Anzahl</label>
-                    <input type="number" class="form-control" id="count" name="count">
+                    <label for="comment">Neuer Kommentar hinzufügen</label>
+                    <textarea type="text" class="form-control" id="comment" name="comment" placeholder="Schreiben Sie hier Ihren Kommentar"></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" class="form-control" id="name" name="name">
-                </div>
-                <button type="submit" class="btn btn-primary">Hinzufügen</button>
+                <button type="submit" class="btn btn-primary">Kommentar hinzufügen</button>
             </form>
 
             <a class="btn btn-danger" href="/logout">Logout</a>

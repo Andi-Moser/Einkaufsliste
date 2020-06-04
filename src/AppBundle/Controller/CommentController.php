@@ -13,24 +13,22 @@ class CommentController extends Controller
     /**
      * @Route("/comment/add")
      */
-    public function addFunction(Request $request) {
+    public function addAction(Request $request) {
         if (!$this->checkAccess($request)) {
             return $this->redirect("/login");
         }
 
-        if ($request->isMethod('POST')) {
-            $itemId = intval($request->get('itemId'));
-            $comment = $request->get('comment');
-            $time = time();
-            $userId = $request->getSession()->get('userId');
+        $itemId = $request->get('itemId');
+        $userId = $request->getSession()->get('userId');
+        $comment = $request->get('comment');
+        $time = time();
 
-            $mysqli = $this->getMysqli();
-            $statement = $mysqli->prepare("INSERT INTO amo_comments(userId, itemId, comment, `timestamp`) VALUES (?,?,?,?)");
-            $statement->bind_param("iisi", $userId, $itemId, $comment, $time);
-            $statement->execute();
+        $mysqli = $this->getMysqli();
+        $statement = $mysqli->prepare("INSERT INTO amo_comments2(itemId, userId, comment, `timestamp`) VALUES(?,?,?,?)");
+        $statement->bind_param("iisi", $itemId, $userId, $comment, $time);
+        $statement->execute();
 
-            return $this->redirect("/detail?id=" . $itemId);
-        }
+        return $this->redirect("/detail?id=" . $itemId);
     }
 
     private function checkAccess(Request $request) {

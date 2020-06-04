@@ -9,6 +9,49 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
     <title>Einkaufsliste</title>
+
+    <style type="text/css">
+        .star-five {
+             margin: 25px 0;
+             position: relative;
+             display: inline-block;
+             color: #ffd61a;
+             width: 0px;
+             height: 0px;
+             border-right: 50px solid transparent;
+             border-bottom: 35px solid #ffd61a;
+             border-left: 50px solid transparent;
+             transform: rotate(35deg);
+         }
+        .star-five:before {
+            border-bottom: 40px solid #ffd61a;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            position: absolute;
+            height: 0;
+            width: 0;
+            top: -22.5px;
+            left: -32.5px;
+            display: block;
+            content: '';
+            transform: rotate(-35deg);
+        }
+        .star-five:after {
+            position: absolute;
+            display: block;
+            color: #ffd61a;
+            top: 1.5px;
+            left: -52.5px;
+            width: 0px;
+            height: 0px;
+            border-right: 50px solid transparent;
+            border-bottom: 35px solid #ffd61a;
+            border-left: 50px solid transparent;
+            transform: rotate(-70deg);
+            content: '';
+        }
+
+    </style>
 </head>
 <body>
 <div class="container">
@@ -29,17 +72,27 @@
                 </tr>
             </table>
 
+            <h2>Bewertung</h2>
+
+            <strong>Bewertung: <?php echo round($rating['average'], 1) ?>/5</strong> (<?php echo $rating['count']; ?> Bewertungen)<br />
+
+            <a href="/rate?itemId=<?php echo $item['id']; ?>&rating=1"><div class="star-five"></div></a>
+            <a href="/rate?itemId=<?php echo $item['id']; ?>&rating=2"><div class="star-five"></div></a>
+            <a href="/rate?itemId=<?php echo $item['id']; ?>&rating=3"><div class="star-five"></div></a>
+            <a href="/rate?itemId=<?php echo $item['id']; ?>&rating=4"><div class="star-five"></div></a>
+            <a href="/rate?itemId=<?php echo $item['id']; ?>&rating=5"><div class="star-five"></div></a>
+
             <h2>Kommentare</h2>
 
             <?php
                 foreach ($comments as $comment) {
-                    $timestamp = new DateTime();
-                    $timestamp->setTimestamp(intval($comment['timestamp']) + 60*60);
+                    $date = new DateTime();
+                    $date->setTimestamp($comment['timestamp'] + (3600 * 1));
                     ?>
                     <div class="comment">
-                        <strong><?php echo $comment['username']; ?></strong> schreibt am <?php echo $timestamp->format("d.m.Y H:i"); ?>:<br />
+                        <span><strong><?php echo $comment['username'];?></strong> schreibt am <?php echo $date->format("d.m.Y") ?> um <?php echo $date->format("H:i"); ?>:</span><br />
                         <p>
-                            <?php echo nl2br($comment['comment']); ?>
+                            <?php echo $comment['comment']; ?>
                         </p>
                     </div>
                     <?php
@@ -54,9 +107,6 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Kommentar hinzufügen</button>
             </form>
-
-            <a class="btn btn-danger" href="/logout">Logout</a>
-
         </div>
     </div>
 </div>

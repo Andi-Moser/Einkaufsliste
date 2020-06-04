@@ -107,9 +107,9 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        // app_comment_addfunction
+        // app_comment_add
         if ('/comment/add' === $pathinfo) {
-            return array (  '_controller' => 'AppBundle\\Controller\\CommentController::addFunction',  '_route' => 'app_comment_addfunction',);
+            return array (  '_controller' => 'AppBundle\\Controller\\CommentController::addAction',  '_route' => 'app_comment_add',);
         }
 
         if (0 === strpos($pathinfo, '/hello')) {
@@ -123,6 +123,16 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                 return array (  '_controller' => 'AppBundle\\Controller\\DefaultController::byeAction',  '_route' => 'app_default_bye',);
             }
 
+        }
+
+        // app_item_rating
+        if ('/rate' === $pathinfo) {
+            return array (  '_controller' => 'AppBundle\\Controller\\ItemController::ratingAction',  '_route' => 'app_item_rating',);
+        }
+
+        // app_login_register
+        if ('/register' === $pathinfo) {
+            return array (  '_controller' => 'AppBundle\\Controller\\LoginController::registerAction',  '_route' => 'app_login_register',);
         }
 
         // app_item_detail
@@ -161,11 +171,6 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         // app_item_edit
         if ('/edit' === $pathinfo) {
             return array (  '_controller' => 'AppBundle\\Controller\\ItemController::editAction',  '_route' => 'app_item_edit',);
-        }
-
-        // app_login_register
-        if ('/register' === $pathinfo) {
-            return array (  '_controller' => 'AppBundle\\Controller\\LoginController::registerAction',  '_route' => 'app_login_register',);
         }
 
         if ('/' === $pathinfo && !$allow) {

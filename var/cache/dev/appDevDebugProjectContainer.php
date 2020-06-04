@@ -16,6 +16,6 @@ if (!\class_exists(appDevDebugProjectContainer::class, false)) {
 
 return new \ContainerD3gpuap\appDevDebugProjectContainer([
     'container.build_hash' => 'D3gpuap',
-    'container.build_id' => '0ed94109',
-    'container.build_time' => 1590649031,
+    'container.build_id' => '679e12bb',
+    'container.build_time' => 1591251592,
 ], __DIR__.\DIRECTORY_SEPARATOR.'ContainerD3gpuap');

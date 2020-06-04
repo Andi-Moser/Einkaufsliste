@@ -11,6 +11,27 @@ use Symfony\Component\Routing\Annotation\Route;
 class ItemController extends Controller
 {
     /**
+     * @Route("/rate")
+     */
+    public function ratingAction(Request $request) {
+        if (!$this->checkAccess($request)) {
+            return $this->redirect("/login");
+        }
+
+        $mysqli = $this->getMysqli();
+        $itemId = intval($request->get('itemId'));
+        $userId = $request->getSession()->get('userId');
+        $rating = intval($request->get('rating'));
+        $time = time();
+
+        $statement = $mysqli->prepare("INSERT INTO amo_ratings(itemId, userId, rating, timestamp) VALUES (?,?,?,?)");
+        $statement->bind_param("iiii", $itemId, $userId, $rating, $time);
+        $statement->execute();
+
+        return $this->redirect("/detail?id=" . $itemId);
+    }
+
+    /**
      * @Route("/detail")
      */
     public function detailAction(Request $request) {
@@ -18,29 +39,29 @@ class ItemController extends Controller
             return $this->redirect("/login");
         }
 
-        $mysqli = $this->getMysqli();
         $itemId = $request->get('id');
-        $sql = "SELECT * FROM amo_items WHERE id = ?";
+        $mysqli = $this->getMysqli();
 
-        $statement = $mysqli->prepare($sql);
-        $statement->bind_param("i", $itemId);
-        $statement->execute();
-        $result = $statement->get_result();
-        $item = $result->fetch_assoc();
+        $sql = "SELECT * FROM amo_items WHERE id = " . intval($itemId);
+        $item = $mysqli->query($sql)->fetch_assoc();
 
+        $commentsSQL = "SELECT amo_comments2.id, timestamp, comment, username 
+                        FROM amo_comments2 
+                            INNER JOIN mon_user ON mon_user.id = amo_comments2.userId 
+                        WHERE itemId = 11 
+                        ORDER BY `timestamp` DESC";
+        $commentResult = $mysqli->query($commentsSQL);
 
-        $commentResult = $mysqli->query("SELECT amo_comments.id, comment, timestamp, username 
-                                                    FROM amo_comments 
-                                                    INNER JOIN mon_user ON mon_user.id = amo_comments.userId 
-                                                    WHERE itemId = ".intval($itemId)." 
-                                                    ORDER BY `timestamp` DESC");
         $comments = [];
 
         while (($line = $commentResult->fetch_assoc()) != null) {
             $comments[] = $line;
         }
 
-        return $this->render("item/detail.html.php", ["item" => $item, "comments" => $comments]);
+        $ratingSQL = "SELECT SUM(rating)/COUNT(rating) average, COUNT(rating) count FROM `amo_ratings` WHERE itemId = " . intval($itemId);
+        $rating = $mysqli->query($ratingSQL)->fetch_assoc();
+
+        return $this->render("item/detail.html.php", ["item" => $item, "comments" => $comments, "rating" => $rating]);
     }
 
     /**
